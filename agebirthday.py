@@ -28,7 +28,7 @@ def main():
 		date = m.group("date")
 		title = m.group("title")
 		if date not in tweeted:
-			print date,title
+			# print date,title
 			
 			tweet( u"%s ■%sイラストがアップロードされました■ http://www.age-soft.co.jp/" % (date,title) )
 			
