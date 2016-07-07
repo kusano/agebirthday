@@ -7,27 +7,25 @@ import urllib, re, time, tweepy
 
 from token import *
 
-URL			= "http://www.age-soft.co.jp/whats_new.html"
+URL			= "http://www.age-soft.co.jp/whatsnew/"
 TWEETED		= "agebirthday.txt"		# 発言済みの日付を記録
 LOG			= "agebirthdaylog.txt"		# ログ
 # 検索用正規表現
-REG			= (ur"""<div class="title1">([0-9/]*)　?(<.*?>)?</div>"""+
-			   ur"""[\r\n]*"""+
-			   ur"""<div class="title2">(.*?)イラストを(アップ|掲載|公開).*?</div>""")
+REG			= (ur"""<p class="post-date">(?P<date>.*)</p>\s*"""+
+			   ur"""<h3>(?P<title>.*)イラストを(アップ|掲載|公開).*?</h3>""")
 
 def main():
-	tweeted = open(TWEETED,"r").read().split()
+	tweeted = open(TWEETED,"r").read().decode("utf-8").split()
 	
-	data = urllib.urlopen(URL).read().decode("cp932")
-	#data = open("whats_new.html").read().decode("cp932")
+	data = urllib.urlopen(URL).read().decode("utf-8")
 	
 	c = 0
 	
 	for m in re.finditer(REG,data):
-		date = m.group(1)
-		title = m.group(3)[1:]	# ■を削除
+		date = m.group("date")
+		title = m.group("title")
 		if date not in tweeted:
-			# print date,title
+			print date,title
 			
 			tweet( u"%s ■%sイラストがアップロードされました■ http://www.age-soft.co.jp/" % (date,title) )
 			
@@ -49,7 +47,7 @@ def tweet(msg):
 	api.update_status(msg)
 
 def log(msg):
-	open(LOG,"a").write(time.strftime("%Y/%m/%d %H:%M:%S")+" "+msg+"\n")
+	open(LOG,"a").write((time.strftime("%Y/%m/%d %H:%M:%S")+" "+msg+"\n").encode("utf-8"))
 
 if __name__=="__main__":
 	main()
