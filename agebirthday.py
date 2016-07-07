@@ -15,7 +15,10 @@ REG			= (ur"""<p class="post-date">(?P<date>.*)</p>\s*"""+
 			   ur"""<h3>(?P<title>.*)イラストを(アップ|掲載|公開).*?</h3>""")
 
 def main():
-	tweeted = open(TWEETED,"r").read().decode("utf-8").split()
+	try:
+		tweeted = open(TWEETED,"r").read().decode("utf-8").split()
+	except IOError:
+		tweeted = []
 	
 	data = urllib.urlopen(URL).read().decode("utf-8")
 	
@@ -41,6 +44,7 @@ def main():
 	log("checked")
 
 def tweet(msg):
+	# return
 	auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
 	auth.set_access_token(access_key, access_secret)
 	api = tweepy.API(auth)
